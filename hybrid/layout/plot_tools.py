@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from typing import Tuple
 from shapely.geometry import (
     LineString,
     MultiPolygon,
@@ -17,7 +18,7 @@ def plot_turbines(turb_pos_x: list,
 def plot_solar_strands(
         figure,
         axes,
-        areas: (int, float, LineString),
+        areas: Tuple[int, float, LineString],
         *args,
         **kwargs
         ) -> None:

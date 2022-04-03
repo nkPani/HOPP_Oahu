@@ -10,7 +10,7 @@ from hybrid.sites import SiteInfo
 from hybrid.dispatch import HybridDispatch, HybridDispatchOptions
 
 
-class HybridDispatchBuilderSolver:
+class HybridDispatchManager:
     """
 
     """
@@ -89,7 +89,7 @@ class HybridDispatchBuilderSolver:
     @staticmethod
     def glpk_solve_call(pyomo_model: pyomo.ConcreteModel,
                         log_name: str = ""):
-        solver = pyomo.SolverFactory('glpk')  # Ref. on solver options: https://en.wikibooks.org/wiki/GLPK/Using_GLPSOL
+        solver = pyomo.SolverFactory('glpk', executable="/Users/dguittet/miniconda3/envs/hopp/bin/glpsol")  # Ref. on solver options: https://en.wikibooks.org/wiki/GLPK/Using_GLPSOL
         solver_options = {'cuts': None,
                           #'mipgap': 0.001,
                           'tmlim': 30
@@ -107,14 +107,14 @@ class HybridDispatchBuilderSolver:
         results = solver.solve(pyomo_model, options=solver_options)
 
         if log_name != "":
-            HybridDispatchBuilderSolver.append_solve_to_log(log_name, solver_options['log'])
+            HybridDispatchManager.append_solve_to_log(log_name, solver_options['log'])
 
         if results.solver.termination_condition == TerminationCondition.infeasible:
-            HybridDispatchBuilderSolver.print_infeasible_problem(pyomo_model)
+            HybridDispatchManager.print_infeasible_problem(pyomo_model)
         return results
 
     def glpk_solve(self):
-        return HybridDispatchBuilderSolver.glpk_solve_call(self.pyomo_model, self.options.log_name)
+        return HybridDispatchManager.glpk_solve_call(self.pyomo_model, self.options.log_name)
 
     @staticmethod
     def mindtpy_solve_call(pyomo_model: pyomo.ConcreteModel,
@@ -128,10 +128,10 @@ class HybridDispatchBuilderSolver:
 
         if log_name != "":
             solver_options = {'log': 'dispatch_instance.log'}
-            HybridDispatchBuilderSolver.append_solve_to_log(log_name, solver_options['log'])
+            HybridDispatchManager.append_solve_to_log(log_name, solver_options['log'])
 
         if results.solver.termination_condition == TerminationCondition.infeasible:
-            HybridDispatchBuilderSolver.print_infeasible_problem(pyomo_model)
+            HybridDispatchManager.print_infeasible_problem(pyomo_model)
         return results
 
     @staticmethod
@@ -152,9 +152,9 @@ class HybridDispatchBuilderSolver:
         with open('infeasible_instance.txt', 'w') as f:
             sys.stdout = f
             print('\n' + '#' * 20 + ' Model Parameter Values ' + '#' * 20 + '\n')
-            HybridDispatchBuilderSolver.print_all_parameters(model)
+            HybridDispatchManager.print_all_parameters(model)
             print('\n' + '#' * 20 + ' Model Blocks Display ' + '#' * 20 + '\n')
-            HybridDispatchBuilderSolver.display_all_blocks(model)
+            HybridDispatchManager.display_all_blocks(model)
             sys.stdout = original_stdout
         raise ValueError("Dispatch optimization model is infeasible.\n"
                          "See 'infeasible_instance.txt' for parameter values.")
