@@ -13,7 +13,7 @@ def binary_search_float(objective: Callable[[float], any],
                         maximum: float,
                         max_iters: int = 32,
                         threshold: float = 1e-3,
-                        ) -> (float, bool):
+                        ) -> Tuple[float, bool]:
     """
     :param objective: function for which to find fixed point
     :param minimum: min value of search
@@ -45,7 +45,7 @@ def binary_search_float(objective: Callable[[float], any],
 def binary_search_int(objective: Callable[[int], any],
                       minimum: int,
                       maximum: int,
-                      ) -> (int, bool):
+                      ) -> Tuple[int, bool]:
     """
     :param objective: function for which to find fixed point
     :param minimum: min value of search

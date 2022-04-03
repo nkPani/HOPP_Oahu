@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Optional
+from typing import Optional, Tuple
 
 from shapely.affinity import rotate, translate
 from shapely.geometry import Point, LineString, Polygon
@@ -14,7 +14,7 @@ def get_evenly_spaced_points_along_border(boundary: BaseGeometry,
                                           spacing: float,
                                           offset: float = 0.0,
                                           max_number: Optional[int] = None,
-                                          ) -> [Point]:
+                                          ) -> Tuple[Point]:
     """
     Spaced equally traversing the perimeter
     :param boundary: a boundary line
@@ -39,7 +39,7 @@ def make_grid_lines(site_shape: BaseGeometry,
                     center: Point,
                     grid_angle: float,
                     interrow_spacing: float
-                    ) -> [LineString]:
+                    ) -> Tuple[LineString]:
     """
     Place parallel lines inside a site
     :param site_shape: Polygon
@@ -65,7 +65,7 @@ def make_grid_lines(site_shape: BaseGeometry,
         interrow_spacing * np.cos(-grid_angle + np.pi / 2),
         interrow_spacing * np.sin(-grid_angle + np.pi / 2))
     
-    grid_lines: [LineString] = []
+    grid_lines: Tuple[LineString] = []
     num_rows_per_side: int = int(np.ceil((line_length / 2) / interrow_spacing) + 1)
     for row_number in range(-num_rows_per_side, num_rows_per_side + 1):
         line = translate(base_line, row_number * row_offset.x, row_number * row_offset.y)
@@ -81,7 +81,7 @@ def create_grid(site_shape: BaseGeometry,
                 interrow_spacing: float,
                 row_phase_offset: float,
                 max_sites: int = None,
-                ) -> [Point]:
+                ) -> Tuple[Point]:
     """
     Get a list of coordinates placed along a grid inside a site boundary
     :param site_shape: Polygon
@@ -93,7 +93,7 @@ def create_grid(site_shape: BaseGeometry,
     :param max_sites: max number of turbines
     :return: list of coordinates
     """
-    grid_lines: [LineString] = make_grid_lines(
+    grid_lines: Tuple[LineString] = make_grid_lines(
         site_shape,
         center,
         grid_angle,
@@ -102,7 +102,7 @@ def create_grid(site_shape: BaseGeometry,
     phase_offset: float = row_phase_offset * intrarow_spacing
     
     prepared_site = prep(site_shape)
-    grid_positions: [Point] = []
+    grid_positions: Tuple[Point] = []
     for row_number, grid_line in enumerate(grid_lines):
         length = grid_line.length
         
@@ -129,7 +129,7 @@ def get_best_grid(site_shape: BaseGeometry,
                   max_spacing: float,
                   min_spacing: float,
                   max_sites: int,
-                  ) -> (float, [Point]):
+                  ) -> Tuple[float, Tuple[Point]]:
     """
     Finds the least dense grid layout that fits max_sites into it, and if that isn't possible it finds the grid that
     fits the most turbines into the site_shape.
@@ -145,7 +145,7 @@ def get_best_grid(site_shape: BaseGeometry,
     :param max_sites: max number of turbines
     :return intrarow spacing and list of grid coordinates
     """
-    best: (int, float, [Point]) = (0, max_spacing, [])
+    best: Tuple[int, float, Tuple[Point]] = (0, max_spacing, [])
     
     if max_sites > 0:
         prepared_site = prep(site_shape)
@@ -202,7 +202,7 @@ def move_turbines_within_boundary(turb_pos_x: list,
                                   turb_pos_y: list,
                                   boundary: Polygon,
                                   valid_region: Polygon
-                                  ) -> (np.ndarray, float):
+                                  ) -> Tuple[np.ndarray, float]:
     """
     :param turb_pos_x: list of x coordinates
     :param turb_pos_y: list of y coordinates
@@ -230,7 +230,7 @@ def move_turbines_within_boundary(turb_pos_x: list,
 
 def subtract_turbine_exclusion_zone(min_spacing: float,
                                     source_shape: BaseGeometry,
-                                    turbine_positions: [Point],
+                                    turbine_positions: Tuple[Point],
                                     ) -> BaseGeometry:
     """
     Subtract the min spacing around each turbine from a site polygon

@@ -1,4 +1,4 @@
-from typing import NamedTuple, Union
+from typing import NamedTuple, Union, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import Polygon, Point, MultiPolygon
@@ -98,7 +98,7 @@ class WindLayout:
             wind_shape = wind_shape.difference(exclusions)  # compute valid wind layout shape
 
         # place border turbines
-        turbine_positions: [Point] = []
+        turbine_positions: Tuple[Point] = []
         if not isinstance(wind_shape, MultiPolygon):
             wind_shape = MultiPolygon([wind_shape, ])
 
