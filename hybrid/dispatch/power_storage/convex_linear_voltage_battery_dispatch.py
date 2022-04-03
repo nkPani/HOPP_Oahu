@@ -4,7 +4,7 @@ from pyomo.environ import units as u
 import PySAM.BatteryStateful as BatteryModel
 import PySAM.Singleowner as Singleowner
 
-from hybrid.dispatch.power_storage.linear_voltage_nonconvex_battery_dispatch import NonConvexLinearVoltageBatteryDispatch
+from hybrid.dispatch.power_storage.nonconvex_linear_voltage_battery_dispatch import NonConvexLinearVoltageBatteryDispatch
 
 
 class ConvexLinearVoltageBatteryDispatch(NonConvexLinearVoltageBatteryDispatch):
@@ -28,6 +28,10 @@ class ConvexLinearVoltageBatteryDispatch(NonConvexLinearVoltageBatteryDispatch):
                          block_set_name=block_set_name,
                          include_lifecycle_count=include_lifecycle_count,
                          use_exp_voltage_point=use_exp_voltage_point)
+
+    @property
+    def control_variable(self):
+        return "input_current"
 
     def dispatch_block_rule(self, battery):
         # Additional formulation

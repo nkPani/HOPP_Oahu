@@ -1,8 +1,10 @@
-from hybrid.dispatch import (OneCycleBatteryDispatchHeuristic,
-                             SimpleBatteryDispatchHeuristic,
-                             SimpleBatteryDispatch,
-                             NonConvexLinearVoltageBatteryDispatch,
-                             ConvexLinearVoltageBatteryDispatch)
+from hybrid.dispatch import (
+                             BatteryDispatch,
+                             HeuristicBatteryDispatch,
+                             OneCycleHeuristicBatteryDispatch,
+                             ConvexLinearVoltageBatteryDispatch,
+                             NonConvexLinearVoltageBatteryDispatch
+                             )
 
 
 class HybridDispatchOptions:
@@ -53,9 +55,9 @@ class HybridDispatchOptions:
             raise ValueError("Battery cannot be restricted to charge from PV only if grid_charging is enabled")
 
         self._battery_dispatch_model_options = {
-            'one_cycle_heuristic': OneCycleBatteryDispatchHeuristic,
-            'heuristic': SimpleBatteryDispatchHeuristic,
-            'simple': SimpleBatteryDispatch,
+            'one_cycle_heuristic': OneCycleHeuristicBatteryDispatch,
+            'heuristic': HeuristicBatteryDispatch,
+            'simple': BatteryDispatch,
             'non_convex_LV': NonConvexLinearVoltageBatteryDispatch,
             'convex_LV': ConvexLinearVoltageBatteryDispatch}
         if self.battery_dispatch in self._battery_dispatch_model_options:

@@ -7,7 +7,7 @@ import PySAM.Singleowner as Singleowner
 from hybrid.power_source import *
 
 
-class Battery_Outputs:
+class BatteryOutputs:
     def __init__(self, n_timesteps):
         """ Class of stateful battery outputs
 
@@ -47,7 +47,7 @@ class Battery(PowerSource):
         financial_model = Singleowner.from_existing(system_model, "StandaloneBatterySingleOwner")
         super().__init__("Battery", site, system_model, financial_model)
 
-        self.Outputs = Battery_Outputs(n_timesteps=site.n_timesteps)
+        self.Outputs = BatteryOutputs(n_timesteps=site.n_timesteps)
         self.system_capacity_kw: float = battery_config['system_capacity_kw']
         self.chemistry = chemistry
         BatteryTools.battery_model_sizing(self._system_model,

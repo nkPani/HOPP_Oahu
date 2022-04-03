@@ -30,8 +30,10 @@ class ElectricityPrices(Resource):
 
         self.filename = filepath
 
-        if len(str(self.filename)) > 0 and not os.path.isfile(self.filename):
-            raise ValueError
+        if len(str(self.filename)) == 0:
+            return
+        elif not os.path.isfile(self.filename):
+            raise ValueError(f"'grid_resource_file' {'grid_resource_file'} does not exist")
 
         self.format_data()
 
@@ -44,10 +46,13 @@ class ElectricityPrices(Resource):
         self._data = np.loadtxt(self.filename)
 
     def data(self):
-        if not os.path.isfile(self.filename):
-            raise NotImplementedError("File not available as downloading not implemented yet")
+        if len(self.filename) == 0:
+            raise ValueError("No 'grid_resource_file' was provided to SiteInfo")
+        elif not os.path.isfile(self.filename):
+            raise ValueError(f"'grid_resource_file' {'grid_resource_file'} does not exist")
         return self._data
 
     @Resource.data.setter
     def data(self, data_dict):
-        pass
+        raise NotImplementedError
+

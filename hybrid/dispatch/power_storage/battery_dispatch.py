@@ -7,7 +7,7 @@ import PySAM.Singleowner as Singleowner
 from hybrid.dispatch.power_storage.power_storage_dispatch import PowerStorageDispatch
 
 
-class SimpleBatteryDispatch(PowerStorageDispatch):
+class BatteryDispatch(PowerStorageDispatch):
     _system_model: BatteryModel.BatteryStateful
     _financial_model: Singleowner.Singleowner
     """
@@ -28,6 +28,10 @@ class SimpleBatteryDispatch(PowerStorageDispatch):
                          block_set_name=block_set_name,
                          include_lifecycle_count=include_lifecycle_count)
 
+    @property
+    def control_variable(self):
+        return "input_power"
+
     def initialize_dispatch_model_parameters(self):
         if self.include_lifecycle_count:
             self.lifecycle_cost = 0.01 * self._system_model.value('nominal_energy')  # TODO: update value
@@ -42,13 +46,20 @@ class SimpleBatteryDispatch(PowerStorageDispatch):
         self.maximum_soc = self._system_model.value('maximum_SOC')
         self.initial_soc = self._system_model.value('initial_SOC')
 
+        self.round_trip_efficiency = 95.0  # 90
+        self.capacity = self._system_model.value('nominal_energy') / 1e3  # [MWh]
+
         self._set_control_mode()
         self._set_model_specific_parameters()
 
     def _set_control_mode(self):
-        self._system_model.value("control_mode", 1.0)  # Power control
-        self._system_model.value("input_power", 0.)
-        self.control_variable = "input_power"
+        if self.control_variable == "input_power":
+            self._system_model.value("control_mode", 1.0)  # Power control
+            self._system_model.value("input_power", 0.)
+        elif self.control_variable == "input_current":
+            self._system_model.value("control_mode", 0.0)  # Current control
+        else:
+            raise ValueError(f"control_variable of type {self.control_variable} unrecognized.")
 
     def _set_model_specific_parameters(self):
         self.round_trip_efficiency = 95.0  # 90

@@ -4,10 +4,10 @@ from pyomo.environ import units as u
 import PySAM.BatteryStateful as BatteryModel
 import PySAM.Singleowner as Singleowner
 
-from hybrid.dispatch.power_storage.simple_battery_dispatch import SimpleBatteryDispatch
+from hybrid.dispatch.power_storage.battery_dispatch import BatteryDispatch
 
 
-class SimpleBatteryDispatchHeuristic(SimpleBatteryDispatch):
+class HeuristicBatteryDispatch(BatteryDispatch):
     """Fixes battery dispatch operations based on user input.
 
     Currently, enforces available generation and grid limit assuming no battery charging from grid
@@ -30,7 +30,6 @@ class SimpleBatteryDispatchHeuristic(SimpleBatteryDispatch):
                          financial_model,
                          block_set_name=block_set_name,
                          include_lifecycle_count=False)
-
         self.max_charge_fraction = list([0.0]*len(self.blocks.index_set()))
         self.max_discharge_fraction = list([0.0]*len(self.blocks.index_set()))
         self.user_fixed_dispatch = list([0.0]*len(self.blocks.index_set()))
