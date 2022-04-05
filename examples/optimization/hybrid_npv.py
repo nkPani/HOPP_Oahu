@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Tuple
 import numpy as np
 from collections import OrderedDict
 from hybrid.sites import make_circular_site, make_irregular_site, SiteInfo, locations
@@ -189,7 +190,7 @@ class HybridLayoutProblem(OptimizationProblem):
 
     def objective(self,
                   candidate: object
-                  ) -> (float, float):
+                  ) -> Tuple[float, float]:
         candidate_conforming, penalty_conforming = self.conform_candidate_and_get_penalty(candidate)
         penalty_layout = self._set_simulation_to_candidate(candidate_conforming)
         self.simulation.simulate(1)
