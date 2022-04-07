@@ -68,12 +68,19 @@ def init_hybrid_plant():
         "no_wind": True
         }
 
-    root = "C:/Users/WHamilt2/Documents/Projects/HOPP/CSP_PV_battery_dispatch_plots/"
-    solar_file = root + "daggett_ca_34.865371_-116.783023_psmv3_60_tmy.csv"
+
+    # root = "C:/Users/WHamilt2/Documents/Projects/HOPP/CSP_PV_battery_dispatch_plots/"
+    # solar_file = root + "daggett_ca_34.865371_-116.783023_psmv3_60_tmy.csv"
+    # desired_schedule_file = root + "sample_load_profile_normalized.csv"
+
+    root = "C:/Users/WHamilt2/Documents/Projects/WB_Tunisia/task3_design_study/dispatch_examples/inputs/"    
+    solar_file = root + "SG-90178-2112-1-1_TMY_P50_SAM.csv"
+    desired_schedule_file = root + "desired_schedule_normalized.csv"
+
     prices_file = root + "constant_nom_prices.csv"
-    schedule_scale = 100  # MWe
-    desired_schedule_file = root + "sample_load_profile_normalized.csv"
+    
     # Reading in desired schedule
+    schedule_scale = 100  # MWe
     with open(desired_schedule_file) as f:
         csvreader = csv.reader(f)
         desired_schedule = []
@@ -89,7 +96,7 @@ def init_hybrid_plant():
 
     technologies = {'tower': {
                         'cycle_capacity_kw':  100 * 1000, #100 * 1000,
-                        'solar_multiple': 3.0, #2.0,
+                        'solar_multiple': 2.0, #3.0,
                         'tes_hours': 16.0, #16.0,
                         'optimize_field_before_sim': not is_test,
                         'scale_input_params': True,
@@ -100,13 +107,13 @@ def init_hybrid_plant():
                         'tes_hours': 20.0
                     },
                     'pv': {
-                        'system_capacity_kw': 50 * 1000
+                        'system_capacity_kw': 10 * 1000
                         },
                     'battery': {
                         'system_capacity_kwh': 300 * 1000,
                         'system_capacity_kw': 100 * 1000
                         },
-                    'grid': 150 * 1000}
+                    'grid': 100 * 1000}
 
     # Create model
     hybrid_plant = HybridSimulation({key: technologies[key] for key in techs_in_sim}, 
@@ -133,9 +140,9 @@ def init_hybrid_plant():
 
     csp_dispatch_obj_costs = dict()
     csp_dispatch_obj_costs = {
-                              'cost_per_field_generation': 0.0, #0.5,
-    #                           'cost_per_field_start_rel': 0.0,
-    #                           'cost_per_cycle_generation': 2.0,
+                              'cost_per_field_generation': 0.5,
+                              'cost_per_field_start_rel': 0.0,
+                              'cost_per_cycle_generation': 2.0,
                               'cost_per_cycle_start_rel': 0.0,
                               'cost_per_change_thermal_input': 0.5}
 
@@ -147,9 +154,9 @@ def init_hybrid_plant():
         hybrid_plant.trough.dispatch.objective_cost_terms.update(csp_dispatch_obj_costs)
         hybrid_plant.trough.value('cycle_max_frac', 1.0)
 
-    # if hybrid_plant.battery:
-    #     hybrid_plant.battery.dispatch.lifecycle_cost_per_kWh_cycle = 0.0265 / 100
-    #     # hybrid_plant.battery.dispatch.lifecycle_cost_per_kWh_cycle = 1e-6
+    if hybrid_plant.battery:
+        hybrid_plant.battery.dispatch.lifecycle_cost_per_kWh_cycle = 0.0265 / 100
+        # hybrid_plant.battery.dispatch.lifecycle_cost_per_kWh_cycle = 1e-6
 
     if hybrid_plant.pv:
         hybrid_plant.pv.dc_degradation = [0.5] * 25
@@ -166,8 +173,10 @@ if __name__ == '__main__':
     # TODO: Update name and location if saving
     plot_dispatch_profiles = True
     save_figures = True
-    save_location_root = "C:/Users/WHamilt2/Documents/Projects/HOPP/CSP_PV_battery_dispatch_plots/50MWdc_PV/dispatch_load_constant_prices_zero_cycle_start_zero_field_generation/"
-    plotname = 'tower100_sm3_tes16_pv50_batt100_hr3_grid100'
+    # save_location_root = "C:/Users/WHamilt2/Documents/Projects/HOPP/CSP_PV_battery_dispatch_plots/50MWdc_PV/dispatch_load_constant_prices_zero_cycle_start_zero_field_generation/"
+    save_location_root = "C:/Users/WHamilt2/Documents/Projects/WB_Tunisia/task3_design_study/dispatch_examples/10MWdc_PV/"  
+    
+    plotname = 'tower100_sm2_tes16_pv10_batt100_hr3_grid100'
     if plot_dispatch_profiles:
         plotname += '_dispatch'
 
