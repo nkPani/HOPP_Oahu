@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 from pytest import approx
 import hybrid.clustering as clustering
 import numpy as np
@@ -35,16 +36,9 @@ def parse_wind_file(filename, height=None):
         column_index = heights.index(float(height))
     return (df['Speed'].iloc[:,column_index]).to_numpy()
 
-
 def test_parse_wind_file():
-    # Test single height wind file
-    single_height_file = "resource_files/wind/35.2018863_-101.945027_windtoolkit_2012_60min_100m.srw"
-    wind_data = parse_wind_file(single_height_file)
-    assert len(wind_data) == 8760
-    assert sum(wind_data) == approx(75760, 1e-4)
-
     # Test multiple-height wind file
-    multiple_height_file = "resource_files/wind/35.2018863_-101.945027_windtoolkit_2012_60min_80m_100m.srw"
+    multiple_height_file = Path(__file__).absolute().parent.parent.parent / "resource_files/wind/35.2018863_-101.945027_windtoolkit_2012_60min_80m_100m.srw"
     wind_data = parse_wind_file(multiple_height_file)       # don't specify height -> should return first height
     assert len(wind_data) == 8760
     assert sum(wind_data) == approx(72098, 1e-4)
@@ -326,14 +320,14 @@ def test_wind_resource_parameter():
     clusterer = clustering.Clustering(
         power_sources=['wind'],
         solar_resource_file="resource_files/solar/35.2018863_-101.945027_psmv3_60_2012.csv",
-        wind_resource_data=parse_wind_file("resource_files/wind/35.2018863_-101.945027_windtoolkit_2012_60min_100m.srw"))
+        wind_resource_data=parse_wind_file(Path(__file__).absolute().parent.parent.parent / "resource_files/wind/35.2018863_-101.945027_windtoolkit_2012_60min_80m_100m.srw"))
     clusterer.run_clustering()
     n_clusters = len(clusterer.clusters['count'])
     assert n_clusters == 20
-    assert clusterer.get_sim_start_end_times(0) == (336, 432)
-    assert clusterer.get_sim_start_end_times(n_clusters - 1) == (8640, 8736)
+    assert clusterer.get_sim_start_end_times(0) == (0, 96)
+    assert clusterer.get_sim_start_end_times(n_clusters - 1) == (7776, 7872)
     assert list(clusterer.clusters['exemplars']) == \
-        [7, 38, 41, 54, 55, 58, 61, 86, 95, 116, 125, 138, 146, 154, 158, 159, 162, 174, 175, 180]
+        [0, 7, 10, 18, 28, 41, 51, 54, 55, 58, 61, 65, 86, 95, 113, 116, 125, 146, 154, 162]
 
 
 def test_annual_array_from_cluster_exemplars():
