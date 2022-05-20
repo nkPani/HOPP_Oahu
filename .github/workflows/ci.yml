@@ -33,10 +33,7 @@ jobs:
       - name: Unit tests
         run: |
           pip install pytest
-          PYTHONPATH=. pytest tests/hybrid/test_dispatch.py
-          PYTHONPATH=. pytest tests/hybrid/test_flicker.py
-          PYTHONPATH=. pytest tests/hybrid/test_flicker_mismatch.py
-          PYTHONPATH=. tests/hybrid/test_hybrid.py
+          PYTHONPATH=. pytest tests/hybrid
       - name: Lint with flake8
         run: |
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
