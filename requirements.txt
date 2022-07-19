@@ -32,3 +32,4 @@ urllib3
 hybridbosse
 setuptools
 python-rapidjson
+openmdao[all]
