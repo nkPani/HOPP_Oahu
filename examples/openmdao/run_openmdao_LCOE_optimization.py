@@ -30,7 +30,7 @@ if __name__ == "__main__":
     # prob.driver = om.DOEDriver(om.FullFactorialGenerator(levels=76))
     prob.driver.options['debug_print'] = ["desvars", "objs"]
     prob.driver.add_recorder(om.SqliteRecorder("cases.sql"))
-    # prob.driver.recording_options['includes'] = ['*']
+    prob.driver.recording_options['includes'] = ['*']
 
     ### setup design variables
     # Solar DVs

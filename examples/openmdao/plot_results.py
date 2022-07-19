@@ -43,21 +43,24 @@ no_plot_outputs = ['pv_generation_profile',
                    'wind_resource_dir',
                    ]
 
-## determine max/min point found in parameter sweep or optimization run
-# hybrid_npv
-print('max hybrid_npv = ', np.max(results['hybrid_npv']))
-max_index = np.where(results['hybrid_npv'] == np.max(results['hybrid_npv']))
-print('wind_fraction for max hybrid_npv = ', results[des_var][max_index][0])
+### determine max/min point found in parameter sweep or optimization run (may not correspond with optimal point found by optimizer)
+### This is a manual process for now
+### NOTE: Comment out all sections which are not related to the DV in your run.
 
-#hybrid_lcoe_real
+### hybrid_npv
+# print('max hybrid_npv = ', np.max(results['hybrid_npv']))
+# max_index = np.where(results['hybrid_npv'] == np.max(results['hybrid_npv']))
+# print('wind_fraction for max hybrid_npv = ', results[des_var][max_index][0])
+
+### hybrid_lcoe_real
 print('min hybrid_lceo_real = ', np.min(results['hybrid_lcoe_real']))
 min_index = np.where(results['hybrid_lcoe_real'] == np.min(results['hybrid_lcoe_real']))
 print('wind_fraction for min hybrid_lcoe_real = ', results[des_var][min_index][0])
 
-#hybrid_annual_energy
-print('max hybrid_annual_energy = ', np.max(results['hybrid_annual_energy']))
-max_index = np.where(results['hybrid_annual_energy'] == np.max(results['hybrid_annual_energy']))
-print('wind_fraction for max hybrid_annual_energy = ', results[des_var][max_index][0])
+### hybrid_annual_energy
+# print('max hybrid_annual_energy = ', np.max(results['hybrid_annual_energy']))
+# max_index = np.where(results['hybrid_annual_energy'] == np.max(results['hybrid_annual_energy']))
+# print('wind_fraction for max hybrid_annual_energy = ', results[des_var][max_index][0])
 
 for key in results:
     if key != des_var and key not in no_plot_outputs :
