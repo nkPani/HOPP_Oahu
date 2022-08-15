@@ -5,6 +5,7 @@ from hybrid.sites import SiteInfo, flatirons_site
 from hybrid.hybrid_simulation import HybridSimulation
 from hybrid.dispatch.plot_tools import plot_battery_output, plot_battery_dispatch_error, plot_generation_profile
 from hybrid.keys import set_nrel_key_dot_env
+from examples.yaw_pitch_comp import yaw_pitch_comp
 # Set API key
 set_nrel_key_dot_env()
 
@@ -44,8 +45,8 @@ lon = flatirons_site['lon']
 flatirons_site['elev'] = 1855
 flatirons_site['year'] = 2021
 price_file = examples_dir.parent / "resource_files" / "grid" / "constant_nom_prices.csv"
-wind_resource_file = examples_dir.parent / "resource_files" / "wind" / "yearlong_hopp_validation_wind.srw"
-solar_resource_file = examples_dir.parent / "resource_files" / "solar" / "yearlong_hopp_validation_solar.csv"
+wind_resource_file = examples_dir.parent / "examples" / "resource_files" / "yearlong_hopp_validation_wind.srw"
+solar_resource_file = examples_dir.parent / "examples" / "resource_files" / "yearlong_hopp_validation_solar.csv"
 load_profile = genfromtxt(examples_dir.parent / "resource_files" / "grid" / "yearlong_hopp_validation_load.csv", delimiter=",",skip_header=1)
 
 site = SiteInfo(flatirons_site,
@@ -55,6 +56,13 @@ site = SiteInfo(flatirons_site,
                 grid_resource_file = price_file, 
                 desired_schedule = load_profile)
 
+## Uncomment for simple pitch/yaw correction - doesn't appear to being doing much good right now 
+
+# minutely_wind_dir_filepath = str(examples_dir) + '/resource_files/' + 'yearlong_hopp_wind_dir_deg.csv'
+# hourly_yaw_pitch_filepath = str(examples_dir) + '/resource_files/' + 'yearlong_hopp_GE15_pitch_yaw_deg.csv'
+# site, pitch, yaw_misalignment = yaw_pitch_comp(site, minutely_wind_dir_filepath, hourly_yaw_pitch_filepath)
+# pitch_yaw_misalignment = pd.DataFrame([pitch,yaw_misalignment],index=['Pitch','Yaw Misalignment'])
+# pitch_yaw_misalignment.to_json(str(examples_dir) + '/results/' + 'yearlong_wind_misalignment.json')
 
 # Create base model
 hybrid_plant = HybridSimulation(technologies,
@@ -162,4 +170,5 @@ outputs = pd.DataFrame(
             # 'plant shortfall (kW)': energy_shortfall_hopp
             })
 
-outputs.to_csv(filepath + 'yearlong_outputs.csv')
+outputs.to_csv(str(examples_dir) + '/results/' + 'yearlong_outputs.csv')
+outputs.to_json(str(examples_dir) + '/results/' + 'yearlong_outputs.json')
