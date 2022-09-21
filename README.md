@@ -1,4 +1,4 @@
-# Hybrid Optimization and Performance Platform
+# Hybrid Optimization and Performance Platform - HOMP Branch
 
 As part of NREL's [Hybrid Energy Systems Research](https://www.nrel.gov/wind/hybrid-energy-systems-research.html), this
 software assesses optimal designs for the deployment of utility-scale hybrid energy plants, particularly considering wind,
