@@ -70,7 +70,7 @@ class PVLayout:
     def _set_system_layout(self):
         if self.parameters:
             self._system_model.SystemDesign.gcr = self.parameters.gcr
-        if type(self.parameters) == PVGridParameters:
+        if type(self.parameters) == PVGridParameters or 'DetailedPVParameters' in str(type(self.parameters)):
             self._system_model.SystemDesign.system_capacity = self.module_power * self.num_modules
             logger.info(f"Solar Layout set for {self.module_power * self.num_modules} kw")
         self._system_model.AdjustmentFactors.constant = self.flicker_loss * 100  # percent
@@ -195,7 +195,7 @@ class PVLayout:
         """
         Changes system capacity in the existing layout
         """
-        if type(self.parameters) == PVGridParameters:
+        if type(self.parameters) == PVGridParameters or "DetailedPVParameters" in str(type(self.parameters)):
             self.compute_pv_layout(size_kw, self.parameters)
             if abs(self._system_model.SystemDesign.system_capacity - size_kw) > 1e-3 * size_kw:
                 logger.warn(f"Could not fit {size_kw} kw into existing PV layout parameters of {self.parameters}")
