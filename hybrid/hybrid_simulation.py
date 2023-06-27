@@ -1117,4 +1117,4 @@ class HybridSimulation:
                     site_alpha=0.95,
                     linewidth=4.0
                     ):
-        self.layout.plot(figure, axes, wind_color, pv_color, site_border_color, site_alpha, linewidth)
+        return self.layout.plot(figure, axes, wind_color, pv_color, site_border_color, site_alpha, linewidth)
