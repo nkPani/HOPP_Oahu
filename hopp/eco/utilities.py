@@ -16,11 +16,14 @@ from hopp.simulation.technologies.resource.wind_resource import WindResource
 
 from .finance import adjust_orbit_costs
 
+from PySAM.ResourceTools import SRW_to_wind_data
+
 
 # Function to load inputs
 def get_inputs(
     filename_orbit_config,
     filename_turbine_config,
+    wind_resource_file=None,
     filename_floris_config=None,
     verbose=False,
     show_plots=False,
@@ -71,25 +74,37 @@ def get_inputs(
         plant_config["array_system_design"]["location_data"] = layout_data_location
 
     ############## load wind resource
-    wind_resource = WindResource(
-        lat=plant_config["project_location"]["lat"],
-        lon=plant_config["project_location"]["lon"],
-        year=plant_config["wind_resource_year"],
-        wind_turbine_hub_ht=turbine_config["hub_height"],
-    )
+    if  wind_resource_file is not None:
+        wind_resource = WindResource(
+            lat=plant_config["project_location"]["lat"],
+            lon=plant_config["project_location"]["lon"],
+            year=plant_config["wind_resource_year"],
+            wind_turbine_hub_ht=turbine_config["hub_height"],
+            filepath=wind_resource_file
+        )
+        wind_data = wind_resource._data['data']
+        wind_speed = [W[2] for W in wind_data]
+        plant_config["site"]["mean_windspeed"] = wind_speed
+    else:    
+        wind_resource = WindResource(
+            lat=plant_config["project_location"]["lat"],
+            lon=plant_config["project_location"]["lon"],
+            year=plant_config["wind_resource_year"],
+            wind_turbine_hub_ht=turbine_config["hub_height"],
+        )
 
-    # adjust mean wind speed if desired
-    wind_data = wind_resource._data['data']
-    wind_speed = [W[2] for W in wind_data]
-    if plant_config["site"]["mean_windspeed"]:
-        if np.average(wind_speed) != plant_config["site"]["mean_windspeed"]:
-            wind_speed += plant_config["site"]["mean_windspeed"] - np.average(wind_speed)
-            for i in np.arange(0, len(wind_speed)):
-                # make sure we don't have negative wind speeds after correction
-                wind_resource._data['data'][i][2] = np.maximum(wind_speed[i], 0)
-    else:
-        plant_config["site"]["mean_windspeed"] = np.average(wind_speed)
-
+        # adjust mean wind speed if desired
+        wind_data = wind_resource._data['data']
+        wind_speed = [W[2] for W in wind_data]
+        if plant_config["site"]["mean_windspeed"]:
+            if np.average(wind_speed) != plant_config["site"]["mean_windspeed"]:
+                wind_speed += plant_config["site"]["mean_windspeed"] - np.average(wind_speed)
+                for i in np.arange(0, len(wind_speed)):
+                    # make sure we don't have negative wind speeds after correction
+                    wind_resource._data['data'][i][2] = np.maximum(wind_speed[i], 0)
+        else:
+            plant_config["site"]["mean_windspeed"] = np.average(wind_speed)
+    
     if show_plots or save_plots:
         # plot wind resource if desired
         print("\nPlotting Wind Resource")
