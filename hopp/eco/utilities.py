@@ -16,7 +16,7 @@ from hopp.simulation.technologies.resource.wind_resource import WindResource
 
 from .finance import adjust_orbit_costs
 
-from PySAM.ResourceTools import SRW_to_wind_data
+from pathlib import Path
 
 
 # Function to load inputs
@@ -1033,3 +1033,9 @@ def post_process_simulation(
     ##################################################################################
 
     return annual_energy_breakdown
+
+
+def load_mhk_config(mhk_yaml_path):
+    with open(Path(mhk_yaml_path), 'r') as stream:
+        mhk_config = yaml.safe_load(stream)
+    return mhk_config
